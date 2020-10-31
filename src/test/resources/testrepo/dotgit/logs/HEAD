@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 7151a32624ca0be1d6961db77be4862797a41d2c Fabian Yamaguchi <fabs@shiftleft.io> 1590599528 +0200	commit (initial): Initial commit.
+7151a32624ca0be1d6961db77be4862797a41d2c ddc5215fb4d0ad55dbb9c808bd8ea89fd1385241 Fabian Yamaguchi <fabs@shiftleft.io> 1590599557 +0200	commit: Add a new file.
+ddc5215fb4d0ad55dbb9c808bd8ea89fd1385241 9150a68f1f29825ec79a6f9ace2c9441cc650115 Fabian Yamaguchi <fabs@shiftleft.io> 1590603753 +0200	commit: Add function bar.
+9150a68f1f29825ec79a6f9ace2c9441cc650115 d69263d15bb6806fb2dab1ba4b62ae196a165b79 Fabian Yamaguchi <fabs@shiftleft.io> 1590609864 +0200	commit: Add call to bar.
