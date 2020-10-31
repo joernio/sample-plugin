@@ -1,5 +1,5 @@
-Joern Git Extension
-===================
+Joern Sample Extension
+======================
 
 A sample extension for Joern that determines recently edited files
 from a git repository and tags the corresponding file nodes in the
