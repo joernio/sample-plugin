@@ -4,6 +4,6 @@
   ],
 
   "nodeTypes" : [
-    { "name" : "FILE", "outEdges" : [{"edgeName": "FOO", "inNodes": ["METHOD"]}] }
+      { "name" : "FILE", "outEdges" : [{"edgeName": "FOO", "inNodes": [{"name": "METHOD"}]}] }
   ]
 }

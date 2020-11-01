@@ -6,7 +6,7 @@ set -o nounset
 readonly JOERN_INSTALL=~/bin/joern/joern-cli
 readonly JAR_INSTALL_DIR=${JOERN_INSTALL}/lib/
 
-readonly SCHEMA_SRC_DIR=src/main/schema/
+readonly SCHEMA_SRC_DIR=src/main/resources/schema/
 
 echo "Examining Joern installation..."
 
@@ -24,6 +24,7 @@ cp target/universal/stage/lib/io.joern.joern-sample-extension-*.jar ${JAR_INSTAL
 cp target/universal/stage/lib/org.eclipse.jgit.org.eclipse.jgit* ${JAR_INSTALL_DIR}
 
 echo "Adapting CPG schema"
+cp ${SCHEMA_SRC_DIR}/*.json ${JOERN_INSTALL}/schema-extender/schemas/
 pushd $JOERN_INSTALL
 ./schema-extender.sh
 popd
