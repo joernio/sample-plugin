@@ -37,16 +37,11 @@ Building
 
 Installation
 ------------
-Copy the resulting JAR file to Joern's `lib` directory. Next time you
-start joern, type `run`. Your extension should be listed.
+Check whether the `JOERN_INSTALL` variable is set to your Joern installation directory, then run:
 
-
-```bash
-   cp target/universal/stage/lib/io.shiftleft.joern-sample-extension-*.jar $joern_install/lib/
-   cp target/universal/stage/lib/org.eclipse.jgit.org.eclipse.jgit* $joern_install/lib/
 ```
-
-where `$joern_install` is the directory where you installed Joern/Ocular.
+./install.sh
+```
 
 Running
 -------
