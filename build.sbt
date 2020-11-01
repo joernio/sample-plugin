@@ -17,9 +17,9 @@ ThisBuild/resolvers ++= Seq(
 libraryDependencies ++= Seq(
 
   "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r",
-  "io.shiftleft" %% "semanticcpg" % cpgVersion,
-  "io.shiftleft" %% "semanticcpg-tests" % cpgVersion % Test classifier "tests",
-  "io.shiftleft" %% "fuzzyc2cpg" % cpgVersion % Test,
+  "io.shiftleft" %% "semanticcpg" % "custom",
+  "io.shiftleft" %% "semanticcpg-tests" % "custom" % Test classifier "tests",
+  "io.shiftleft" %% "fuzzyc2cpg" % "custom" % Test,
   "org.scalatest" %% "scalatest" % "3.1.1" % Test
 )
 
@@ -54,9 +54,10 @@ Compile / sourceGenerators += Def.task {
     s"git clone --depth 1 --branch v${cpgVersion} https://github.com/ShiftLeftSecurity/codepropertygraph/" !!
   }
 
+  println("Publishing as codepropertygraph-custom")
+  sys.process.Process(Seq("sbt","""set ThisBuild/version := "custom"""", "publishM2"), new java.io.File(cpgDirName)).!!
   Seq()
 }.taskValue
-
 
 ThisBuild/licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 
