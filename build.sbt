@@ -27,6 +27,12 @@ ThisBuild/Compile/scalacOptions ++= Seq(
   "-language:implicitConversions",
 )
 
+Compile / sourceGenerators += Def.task {
+  println("REACHED")
+  Seq()
+}.taskValue
+
+
 ThisBuild/licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 
