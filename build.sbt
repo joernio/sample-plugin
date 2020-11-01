@@ -31,10 +31,25 @@ ThisBuild/Compile/scalacOptions ++= Seq(
 )
 
 Compile / sourceGenerators += Def.task {
-  val cpgDirExists = File("codepropertygraph").exists
-  if (cpgDirExists){
-    println("CPG directory already exist, no need to clone")
+  val cpgDirName = "codepropertygraph"
+  val cpgDirExists = File(cpgDirName).exists
+
+  val correctCpgIsPresent = if (cpgDirExists){
+    println("CPG directory already exist")
+    val versionAtHead =
+      sys.process.Process(Seq("git","describe", "--tags"), new java.io.File(cpgDirName)).!!.stripLineEnd
+    val versionsMatch = s"v$cpgVersion" == versionAtHead
+    println("Required version: " + s"v$cpgVersion")
+    println("Version at head: " + versionAtHead)
+    versionsMatch
   } else {
+    false
+  }
+
+  if(!correctCpgIsPresent) {
+    if (cpgDirExists) {
+      File(cpgDirName).delete()
+    }
     println(s"Cloning CPG version ${cpgVersion}...")
     s"git clone --depth 1 --branch v${cpgVersion} https://github.com/ShiftLeftSecurity/codepropertygraph/" !!
   }
