@@ -5,6 +5,9 @@ val cpgVersion = "1.2.16"
 
 enablePlugins(JavaAppPackaging)
 
+import better.files._
+import scala.sys.process._
+
 ThisBuild/resolvers ++= Seq(
   Resolver.mavenLocal,
   Resolver.bintrayRepo("shiftleft", "maven"),
@@ -28,7 +31,14 @@ ThisBuild/Compile/scalacOptions ++= Seq(
 )
 
 Compile / sourceGenerators += Def.task {
-  println("REACHED")
+  val cpgDirExists = File("codepropertygraph").exists
+  if (cpgDirExists){
+    println("CPG directory already exist, no need to clone")
+  } else {
+    println(s"Cloning CPG version ${cpgVersion}...")
+    s"git clone --depth 1 --branch v${cpgVersion} https://github.com/ShiftLeftSecurity/codepropertygraph/" !!
+  }
+
   Seq()
 }.taskValue
 
