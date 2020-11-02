@@ -12,7 +12,7 @@ mergeSchemaTask := {
   val outputRoot = new File(sourceManaged.in(Compile).value.getAbsolutePath)
   val outputFile = outputRoot / "cpg.json"
   val schemasDir = new File("schema/src/main/resources/schema")
-  val schemaFiles = schemasDir.listFiles.toSeq :+ extractOriginalSchema.value
+  val schemaFiles = schemasDir.listFiles.toSeq ++ extractOriginalSchema.value
   val mergedSchema = overflowdb.codegen.SchemaMerger.mergeCollections(schemaFiles)
   outputFile.mkdirs
   mergedSchema.toScala.copyTo(outputFile.toScala, overwrite = true)
@@ -32,10 +32,9 @@ Compile / sourceGenerators += Def.task {
   FileUtils.listFilesRecursively(outputRoot)
 }.taskValue
 
-lazy val extractOriginalSchema = taskKey[File]("extract original cpg schema from dependency")
+lazy val extractOriginalSchema = taskKey[Set[File]]("extract original cpg schema from dependency")
 extractOriginalSchema := {
   val artifactName = "codepropertygraph-schema_2.13"
-  val fullSchemaFilename = "cpg.json"
   val cpgSourceJar = updateClassifiers.value
     .configurations
     .filter(_.configuration.name == "compile")
@@ -47,10 +46,10 @@ extractOriginalSchema := {
     .headOption
     .getOrElse(throw new AssertionError(s"unable to find $artifactName from dependencies"))
 
-  val tmpDir = IO.temporaryDirectory
-  IO.unzip(cpgSourceJar, tmpDir, _ == fullSchemaFilename)
-  tmpDir.listFiles(new java.io.FilenameFilter {
-    override def accept(dir: File, name: String) = name == fullSchemaFilename
-  }).headOption.getOrElse(throw new AssertionError(s"unable to find original $fullSchemaFilename"))
+  val tmpDir = java.nio.file.Files.createTempDirectory("joern-sample-ext")
+
+  val schemaFiles = IO.unzip(cpgSourceJar, tmpDir.toFile, _.endsWith(".json"))
+  if (schemaFiles.isEmpty) throw new AssertionError(s"unable to find original schema files in $artifactName")
+  schemaFiles
 }
 
