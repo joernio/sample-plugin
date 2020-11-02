@@ -1,7 +1,6 @@
 name := "joern-sample-extension"
 ThisBuild/organization := "io.joern"
 ThisBuild/scalaVersion := "2.13.0"
-val cpgVersion = "1.2.17+2-344ab09b"
 
 enablePlugins(JavaAppPackaging)
 
@@ -9,9 +8,9 @@ lazy val schema = project.in(file("schema"))
 dependsOn(schema)
 libraryDependencies ++= Seq(
   "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r",
-  "io.shiftleft" %% "semanticcpg" % cpgVersion,
-  "io.shiftleft" %% "semanticcpg-tests" % cpgVersion % Test classifier "tests",
-  "io.shiftleft" %% "fuzzyc2cpg" % cpgVersion % Test,
+  "io.shiftleft" %% "semanticcpg" % Versions.cpg,
+  "io.shiftleft" %% "semanticcpg-tests" % Versions.cpg % Test classifier "tests",
+  "io.shiftleft" %% "fuzzyc2cpg" % Versions.cpg % Test,
   "org.scalatest" %% "scalatest" % "3.1.1" % Test
 )
 excludeDependencies += ExclusionRule("io.shiftleft", "codepropertygraph-domain-classes_2.13")

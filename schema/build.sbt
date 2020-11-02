@@ -1,9 +1,9 @@
 name := "schema"
 
-libraryDependencies += "io.shiftleft" %% "overflowdb-traversal" % "1.19"
-// TODO define in root build.sbt
-val cpgVersion = "1.2.17+2-344ab09b"
-libraryDependencies += "io.shiftleft" %% "codepropertygraph-schema" % cpgVersion
+libraryDependencies ++= Seq(
+  "io.shiftleft" %% "codepropertygraph-schema" % Versions.cpg,
+  "io.shiftleft" %% "overflowdb-traversal" % Versions.overflowdb,
+)
 
 import better.files.FileExtensions
 
