@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r",
   "io.shiftleft" %% "semanticcpg" % Versions.cpg,
   "io.shiftleft" %% "semanticcpg-tests" % Versions.cpg % Test classifier "tests",
+  "io.shiftleft" %% "fuzzyc2cpg-tests" % Versions.cpg % Test classifier "tests",
   "io.shiftleft" %% "fuzzyc2cpg" % Versions.cpg % Test,
   "org.scalatest" %% "scalatest" % "3.1.1" % Test
 )

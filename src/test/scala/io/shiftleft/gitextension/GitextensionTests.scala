@@ -1,10 +1,11 @@
 package io.shiftleft.gitextension
 
-import java.nio.file.Paths
+import io.shiftleft.fuzzyc2cpg.testfixtures.CodeDirToCpgFixture
 
+import java.nio.file.Paths
 import io.shiftleft.semanticcpg.layers.LayerCreatorContext
-import io.shiftleft.semanticcpg.testfixtures.CodeDirToCpgFixture
 import io.shiftleft.semanticcpg.language._
+
 import java.io.{File => JFile}
 
 class GitextensionTests extends CodeDirToCpgFixture {
