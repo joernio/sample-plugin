@@ -59,11 +59,11 @@ class Gitextension(options: GitExtensionOpts) extends LayerCreator {
     * `run.myextension`.
     * */
   override def create(context: LayerCreatorContext,
-                      serializeInverse: Boolean): Unit = {
+                      storeUndoInfo: Boolean): Unit = {
     val cpg = context.cpg
     val serializedCpg = initSerializedCpg(context.outputDir, "gitextension", 0)
     new DetermineChangedFilesPass(cpg)
-      .createApplySerializeAndStore(serializedCpg, serializeInverse)
+      .createApplySerializeAndStore(serializedCpg, storeUndoInfo)
     serializedCpg.close()
   }
 
