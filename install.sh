@@ -1,30 +1,92 @@
 #!/usr/bin/env bash
+
 set -o errexit
 set -o pipefail
 set -o nounset
+set -eu
 
-readonly JOERN_INSTALL=~/bin/joern/joern-cli
-readonly JAR_INSTALL_DIR=${JOERN_INSTALL}/lib/
+readonly JOERN_VERSION="v1.1.81"
 
-readonly SCHEMA_SRC_DIR=src/main/resources/schema/
+if [ "$(uname)" = 'Darwin' ]; then
+  # get script location
+  # https://unix.stackexchange.com/a/96238
+  if [ "${BASH_SOURCE:-x}" != 'x' ]; then
+    this_script=$BASH_SOURCE
+  elif [ "${ZSH_VERSION:-x}" != 'x' ]; then
+    setopt function_argzero
+    this_script=$0
+  elif eval '[[ -n ${.sh.file} ]]' 2>/dev/null; then
+    eval 'this_script=${.sh.file}'
+  else
+    echo 1>&2 "Unsupported shell. Please use bash, ksh93 or zsh."
+    exit 2
+  fi
+  relative_directory=$(dirname "$this_script")
+  SCRIPT_ABS_DIR=$(cd "$relative_directory" && pwd)
+else
+  SCRIPT_ABS_PATH=$(readlink -f "$0")
+  SCRIPT_ABS_DIR=$(dirname "$SCRIPT_ABS_PATH")
+fi
+
+# Check required tools are installed.
+check_installed() {
+  if ! type "$1" > /dev/null; then
+    echo "Please ensure you have $1 installed."
+    exit 1
+  fi
+}
+
+readonly JOERN_INSTALL="$SCRIPT_ABS_DIR/joern-inst"
 
 echo "Examining Joern installation..."
 
 if [ ! -d "${JOERN_INSTALL}" ]; then
     echo "Cannot find Joern installation at ${JOERN_INSTALL}"
-    echo "Please install Joern first"
-    exit
+    echo "Installing..."
+    check_installed "curl"
+
+    # Fetch installer
+
+    echo "https://github.com/ShiftLeftSecurity/joern/releases/download/$JOERN_VERSION/joern-install.sh"
+    curl -L "https://github.com/ShiftLeftSecurity/joern/releases/download/$JOERN_VERSION/joern-install.sh" -o "$SCRIPT_ABS_DIR/joern-install.sh"
+
+    # Install into `joern-inst`
+    chmod +x $SCRIPT_ABS_DIR/joern-install.sh
+    $SCRIPT_ABS_DIR/joern-install.sh --install-dir="$SCRIPT_ABS_DIR/joern-inst" --version=$JOERN_VERSION --without-plugins
+    rm $SCRIPT_ABS_DIR/joern-install.sh
+
+    # Create symlinks
+
+    pushd $SCRIPT_ABS_DIR
+    ln -s joern-inst/joern-cli/joern . || true
+    ln -s joern-inst/joern-cli/joern-parse . || true
+    ln -s joern-inst/joern-cli/fuzzyc2cpg.sh . || true
+    ln -s joern-inst/joern-cli/joern-scan . || true
+    popd
+
 fi
 
-echo "Compiling (sbt stage)..."
-sbt stage
+# Build the plugin
 
-echo "Installing jars into: ${JAR_INSTALL_DIR}"
-cp target/universal/stage/lib/io.joern.joern-sample-extension-*.jar ${JAR_INSTALL_DIR}
-cp target/universal/stage/lib/org.eclipse.jgit.org.eclipse.jgit* ${JAR_INSTALL_DIR}
+echo "Compiling (sbt createDistribution)..."
+pushd $SCRIPT_ABS_DIR
+rm lib || true
+sbt createDistribution
+popd
 
+# Install the plugin
+
+pushd $SCRIPT_ABS_DIR
+  ln -s joern-inst/joern-cli/lib . || true
+  ./joern --remove-plugin plugin
+  ./joern --add-plugin ./plugin.zip
+  rm lib
+popd
+
+# TODO: the plugin manager should do this for us
 echo "Adapting CPG schema"
-cp ${SCHEMA_SRC_DIR}/*.json ${JOERN_INSTALL}/schema-extender/schemas/
-pushd $JOERN_INSTALL
+readonly SCHEMA_SRC_DIR=schema/src/main/resources/schema/
+cp ${SCHEMA_SRC_DIR}/*.json ${JOERN_INSTALL}/joern-cli/schema-extender/schemas/
+pushd $JOERN_INSTALL/joern-cli
 ./schema-extender.sh
 popd
