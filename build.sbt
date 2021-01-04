@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.MappingsHelper.directory
+
 name := "joern-sample-extension"
 ThisBuild/organization := "io.joern"
 ThisBuild/scalaVersion := "2.13.0"
@@ -8,15 +10,15 @@ enablePlugins(GitVersioning)
 lazy val schema = project.in(file("schema"))
 dependsOn(schema)
 libraryDependencies ++= Seq(
-
-  // The eclipse.jgit dependency is specific to this example
-  "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r",
-
   "io.shiftleft" %% "semanticcpg" % Versions.cpg,
   "io.shiftleft" %% "semanticcpg-tests" % Versions.cpg % Test classifier "tests",
   "io.shiftleft" %% "fuzzyc2cpg-tests" % Versions.cpg % Test classifier "tests",
   "io.shiftleft" %% "fuzzyc2cpg" % Versions.cpg % Test,
-  "org.scalatest" %% "scalatest" % "3.1.1" % Test
+  "org.scalatest" %% "scalatest" % "3.1.1" % Test,
+
+// The eclipse.jgit dependency is specific to this example
+"org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r"
+
 )
 excludeDependencies += ExclusionRule("io.shiftleft", "codepropertygraph-domain-classes_2.13")
 
@@ -36,8 +38,14 @@ Universal / mappings := (Universal / mappings).value.filterNot {
     path.contains("io.circe") ||
     path.contains("net.java.dev") ||
     path.contains("com.github.javaparser") ||
-    path.contains("org.javassist")
+    path.contains("org.javassist") ||
+    // Also include the classes generated from the custom schema
+    // We will add these via the schema-extender so that multiple
+    // plugins can modify the schema used in a joern installation
+    path.contains("io.joern.schema")
 }
+
+mappings in Universal ++= directory("schema/src/main/resources")
 
 sources in (Compile,doc) := Seq.empty
 publishArtifact in (Compile, packageDoc) := false
