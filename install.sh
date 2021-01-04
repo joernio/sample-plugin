@@ -5,7 +5,7 @@ set -o pipefail
 set -o nounset
 set -eu
 
-readonly JOERN_VERSION="v1.1.81"
+readonly JOERN_VERSION="v1.1.82"
 
 if [ "$(uname)" = 'Darwin' ]; then
   # get script location
@@ -76,17 +76,7 @@ popd
 
 # Install the plugin
 
-pushd $SCRIPT_ABS_DIR
-  ln -s joern-inst/joern-cli/lib . || true
+pushd $SCRIPT_ABS_DIR/joern-inst/joern-cli
   ./joern --remove-plugin plugin
-  ./joern --add-plugin ./plugin.zip
-  rm lib
-popd
-
-# TODO: the plugin manager should do this for us
-echo "Adapting CPG schema"
-readonly SCHEMA_SRC_DIR=schema/src/main/resources/schema/
-cp ${SCHEMA_SRC_DIR}/*.json ${JOERN_INSTALL}/joern-cli/schema-extender/schemas/
-pushd $JOERN_INSTALL/joern-cli
-./schema-extender.sh
+  ./joern --add-plugin ../../plugin.zip
 popd
