@@ -10,16 +10,12 @@ dependsOn(domainClasses)
 
 libraryDependencies ++= Seq(
   "io.shiftleft" %% "semanticcpg" % Versions.cpg,
-  "io.shiftleft" %% "semanticcpg-tests" % Versions.cpg % Test classifier "tests",
   "io.shiftleft" %% "fuzzyc2cpg-tests" % Versions.cpg % Test classifier "tests",
-  "io.shiftleft" %% "fuzzyc2cpg" % Versions.cpg % Test,
   "org.scalatest" %% "scalatest" % "3.1.1" % Test,
 
-// The eclipse.jgit dependency is specific to this example
-"org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r"
-
+  // The eclipse.jgit dependency is specific to this example
+  "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r"
 )
-// excludeDependencies += ExclusionRule("io.shiftleft", "codepropertygraph-domain-classes_2.13")
 
 // We exclude a few jars that the main joern distribution already includes
 Universal / mappings := (Universal / mappings).value.filterNot {
@@ -47,11 +43,9 @@ Universal / mappings := (Universal / mappings).value.filterNot {
 lazy val createDistribution = taskKey[Unit]("Create binary distribution of extension")
 createDistribution := {
   val pkgBin = (Universal/packageBin).value
-  val dstArchive = "./plugin.zip"
-  IO.copy(
-    List((pkgBin, file(dstArchive))),
-    CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true)
-  )
+  val dstArchive = file("./plugin.zip")
+  IO.copyFile(pkgBin, dstArchive,
+    CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
   println(s"created distribution - resulting files: $dstArchive")
 }
 
@@ -60,8 +54,6 @@ ThisBuild/Compile/scalacOptions ++= Seq(
   "-deprecation",
   "-language:implicitConversions",
 )
-
-ThisBuild/licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 Global/onChangedBuildSource := ReloadOnSourceChanges
 
