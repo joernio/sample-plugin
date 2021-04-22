@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
 "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r"
 
 )
-ThisBuild/excludeDependencies += ExclusionRule("io.shiftleft", "codepropertygraph-domain-classes_2.13")
+// excludeDependencies += ExclusionRule("io.shiftleft", "codepropertygraph-domain-classes_2.13")
 
 // We exclude a few jars that the main joern distribution already includes
 Universal / mappings := (Universal / mappings).value.filterNot {
