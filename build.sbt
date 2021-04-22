@@ -8,7 +8,8 @@ enablePlugins(JavaAppPackaging)
 enablePlugins(GitVersioning)
 
 lazy val schema = project.in(file("schema"))
-dependsOn(schema)
+lazy val domainClasses = project.in(file("domain-classes"))
+// dependsOn(domainClasses)
 libraryDependencies ++= Seq(
   "io.shiftleft" %% "semanticcpg" % Versions.cpg,
   "io.shiftleft" %% "semanticcpg-tests" % Versions.cpg % Test classifier "tests",
@@ -44,8 +45,6 @@ Universal / mappings := (Universal / mappings).value.filterNot {
     // plugins can modify the schema used in a joern installation
     path.contains("io.joern.schema")
 }
-
-Universal/mappings ++= directory("schema/src/main/resources")
 
 sources in (Compile,doc) := Seq.empty
 publishArtifact in (Compile, packageDoc) := false

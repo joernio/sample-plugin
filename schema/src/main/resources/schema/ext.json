@@ -1,9 +1,0 @@
-{
-  "edgeTypes" : [
-    {"id" : 9000, "name": "FOO", "comment" : "Foo edge", "keys": []}
-  ],
-
-  "nodeTypes" : [
-      { "name" : "FILE", "outEdges" : [{"edgeName": "FOO", "inNodes": [{"name": "METHOD"}]}] }
-  ]
-}
