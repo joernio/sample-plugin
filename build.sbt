@@ -62,7 +62,6 @@ createDistribution := {
 }
 
 ThisBuild/Compile/scalacOptions ++= Seq(
-  "-Xfatal-warnings",
   "-feature",
   "-deprecation",
   "-language:implicitConversions",
