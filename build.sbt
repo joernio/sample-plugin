@@ -52,7 +52,6 @@ publishArtifact in (Compile, packageDoc) := false
 
 lazy val createDistribution = taskKey[Unit]("Create binary distribution of extension")
 createDistribution := {
-  (Universal/packageZipTarball).value
   val pkgBin = (Universal/packageBin).value
   val dstArchive = "./plugin.zip"
   IO.copy(
