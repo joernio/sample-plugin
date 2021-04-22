@@ -45,7 +45,7 @@ Universal / mappings := (Universal / mappings).value.filterNot {
     path.contains("io.joern.schema")
 }
 
-mappings in Universal ++= directory("schema/src/main/resources")
+Universal/mappings ++= directory("schema/src/main/resources")
 
 sources in (Compile,doc) := Seq.empty
 publishArtifact in (Compile, packageDoc) := false
