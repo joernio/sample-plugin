@@ -1,15 +1,13 @@
-import com.typesafe.sbt.packager.MappingsHelper.directory
-
 name := "joern-sample-extension"
 ThisBuild/organization := "io.joern"
 ThisBuild/scalaVersion := "2.13.4"
 
 enablePlugins(JavaAppPackaging)
-enablePlugins(GitVersioning)
 
 lazy val schema = project.in(file("schema"))
 lazy val domainClasses = project.in(file("domain-classes"))
-// dependsOn(domainClasses)
+dependsOn(domainClasses)
+
 libraryDependencies ++= Seq(
   "io.shiftleft" %% "semanticcpg" % Versions.cpg,
   "io.shiftleft" %% "semanticcpg-tests" % Versions.cpg % Test classifier "tests",
@@ -21,7 +19,7 @@ libraryDependencies ++= Seq(
 "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r"
 
 )
-excludeDependencies += ExclusionRule("io.shiftleft", "codepropertygraph-domain-classes_2.13")
+ThisBuild/excludeDependencies += ExclusionRule("io.shiftleft", "codepropertygraph-domain-classes_2.13")
 
 // We exclude a few jars that the main joern distribution already includes
 Universal / mappings := (Universal / mappings).value.filterNot {
@@ -46,9 +44,6 @@ Universal / mappings := (Universal / mappings).value.filterNot {
     path.contains("io.joern.schema")
 }
 
-sources in (Compile,doc) := Seq.empty
-publishArtifact in (Compile, packageDoc) := false
-
 lazy val createDistribution = taskKey[Unit]("Create binary distribution of extension")
 createDistribution := {
   val pkgBin = (Universal/packageBin).value
@@ -72,5 +67,4 @@ Global/onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild/resolvers ++= Seq(
   Resolver.mavenLocal,
-  Resolver.bintrayRepo("shiftleft", "maven"),
   "Sonatype OSS" at "https://oss.sonatype.org/content/repositories/public")
