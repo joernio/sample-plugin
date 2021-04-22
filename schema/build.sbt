@@ -11,7 +11,7 @@ generateDomainClasses := Def.taskDyn {
   if (!outputRoot.exists || CodeGenGlobalState.lastMd5 != currentMd5) {
     Def.task {
       FileUtils.deleteRecursively(outputRoot)
-      val invoked = (Compile/runMain).toTask(s" io.shiftleft.codepropertygraph.schema.Codegen schema/target/odb-codegen").value
+      val invoked = (Compile/runMain).toTask(s" CpgExtCodegen schema/target/odb-codegen").value
       CodeGenGlobalState.lastMd5 = currentMd5
       FileUtils.listFilesRecursively(outputRoot)
     }
