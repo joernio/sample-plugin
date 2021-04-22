@@ -60,3 +60,5 @@ Global/onChangedBuildSource := ReloadOnSourceChanges
 ThisBuild/resolvers ++= Seq(
   Resolver.mavenLocal,
   "Sonatype OSS" at "https://oss.sonatype.org/content/repositories/public")
+
+maintainer := "michael@shiftleft.io"

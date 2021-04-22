@@ -5,8 +5,6 @@ set -o pipefail
 set -o nounset
 set -eu
 
-readonly JOERN_VERSION="v1.1.82"
-
 if [ "$(uname)" = 'Darwin' ]; then
   # get script location
   # https://unix.stackexchange.com/a/96238
@@ -42,28 +40,8 @@ echo "Examining Joern installation..."
 
 if [ ! -d "${JOERN_INSTALL}" ]; then
     echo "Cannot find Joern installation at ${JOERN_INSTALL}"
-    echo "Installing..."
-    check_installed "curl"
-
-    # Fetch installer
-
-    echo "https://github.com/ShiftLeftSecurity/joern/releases/download/$JOERN_VERSION/joern-install.sh"
-    curl -L "https://github.com/ShiftLeftSecurity/joern/releases/download/$JOERN_VERSION/joern-install.sh" -o "$SCRIPT_ABS_DIR/joern-install.sh"
-
-    # Install into `joern-inst`
-    chmod +x $SCRIPT_ABS_DIR/joern-install.sh
-    $SCRIPT_ABS_DIR/joern-install.sh --install-dir="$SCRIPT_ABS_DIR/joern-inst" --version=$JOERN_VERSION --without-plugins
-    rm $SCRIPT_ABS_DIR/joern-install.sh
-
-    # Create symlinks
-
-    pushd $SCRIPT_ABS_DIR
-    ln -s joern-inst/joern-cli/joern . || true
-    ln -s joern-inst/joern-cli/joern-parse . || true
-    ln -s joern-inst/joern-cli/fuzzyc2cpg.sh . || true
-    ln -s joern-inst/joern-cli/joern-scan . || true
-    popd
-
+    echo "Please install Joern first"
+    exit
 fi
 
 # Build the plugin
