@@ -5,6 +5,8 @@ set -o pipefail
 set -o nounset
 set -eu
 
+readonly JOERN_DISTRIBUTION="$HOME/bin/joern/joern-cli"
+
 if [ "$(uname)" = 'Darwin' ]; then
   # get script location
   # https://unix.stackexchange.com/a/96238
@@ -26,21 +28,10 @@ else
   SCRIPT_ABS_DIR=$(dirname "$SCRIPT_ABS_PATH")
 fi
 
-# Check required tools are installed.
-check_installed() {
-  if ! type "$1" > /dev/null; then
-    echo "Please ensure you have $1 installed."
-    exit 1
-  fi
-}
-
-readonly JOERN_INSTALL="$SCRIPT_ABS_DIR/joern-inst"
-
 echo "Examining Joern installation..."
 
-if [ ! -d "${JOERN_INSTALL}" ]; then
-    echo "Cannot find Joern installation at ${JOERN_INSTALL}"
-    echo "Please install Joern first"
+if [ ! -d "${JOERN_DISTRIBUTION}" ]; then
+    echo "Cannot find Joern installation at ${JOERN_DISTRIBUTION} - please install Joern first"
     exit
 fi
 
@@ -48,13 +39,12 @@ fi
 
 echo "Compiling (sbt createDistribution)..."
 pushd $SCRIPT_ABS_DIR
-rm lib || true
 sbt createDistribution
 popd
 
 # Install the plugin
 
-pushd $SCRIPT_ABS_DIR/joern-inst/joern-cli
-  ./joern --remove-plugin plugin
-  ./joern --add-plugin ../../plugin.zip
+pushd "${JOERN_DISTRIBUTION}"
+  ./joern --remove-plugin plugin || true
+  ./joern --add-plugin $SCRIPT_ABS_DIR/plugin.zip
 popd
