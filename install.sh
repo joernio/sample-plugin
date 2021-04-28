@@ -44,3 +44,7 @@ pushd "${JOERN_DISTRIBUTION}"
   ./joern --remove-plugin plugin || true
   ./joern --add-plugin $SCRIPT_ABS_DIR/plugin.zip
 popd
+
+echo "all done. you can now use this plugin in joern. Examples:"
+echo "joern> nodes.ExampleNode.PropertyNames.all"
+echo "joern> io.shiftleft.gitextension.Gitextension.description"
