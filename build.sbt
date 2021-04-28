@@ -6,8 +6,9 @@ enablePlugins(JavaAppPackaging)
 
 lazy val schema = project.in(file("schema"))
 lazy val domainClasses = project.in(file("domain-classes"))
-dependsOn(domainClasses)
+lazy val schemaExtender = project.in(file("schema-extender"))
 
+dependsOn(domainClasses)
 libraryDependencies ++= Seq(
   "io.shiftleft" %% "semanticcpg" % Versions.cpg,
   "io.shiftleft" %% "fuzzyc2cpg-tests" % Versions.cpg % Test classifier "tests",

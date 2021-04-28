@@ -35,14 +35,10 @@ if [ ! -d "${JOERN_DISTRIBUTION}" ]; then
     exit
 fi
 
-# Build the plugin
-
-echo "Compiling (sbt createDistribution)..."
+echo "Building and installing plugin - incl. domain classes for schema extension..."
 pushd $SCRIPT_ABS_DIR
-sbt createDistribution
+sbt createDistribution replaceDomainClassesInJoern
 popd
-
-# Install the plugin
 
 pushd "${JOERN_DISTRIBUTION}"
   ./joern --remove-plugin plugin || true
