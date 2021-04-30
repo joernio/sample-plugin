@@ -71,8 +71,8 @@ class Gitextension(options: GitExtensionOpts) extends LayerCreator {
     override def run(): Iterator[DiffGraph] = {
       implicit val diffGraph: DiffGraph.Builder = DiffGraph.newBuilder
       val changedFiles = recentlyChangedFiles().map(_.toAbsolutePath.toString)
-      cpg.file.name(changedFiles: _*).newTagNode("RECENTLY_CHANGED").store
-      Iterator(diffGraph.build)
+      cpg.file.name(changedFiles: _*).newTagNode("RECENTLY_CHANGED").store()
+      Iterator(diffGraph.build())
     }
 
     private def recentlyChangedFiles(commitsToGoBack: Int = 10): List[Path] = {

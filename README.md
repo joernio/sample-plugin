@@ -8,4 +8,6 @@ an example that shows how Joern plugins can be developed and tested in
 the IntelliJ IDE. The plugin is written in Scala and makes use of the
 Java library jgit.
 
+To install, make sure that joern and sbt are installed, then simply run `./install.sh`
+
 More details at: https://docs.joern.io/extensions

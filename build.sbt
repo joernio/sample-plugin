@@ -1,26 +1,22 @@
-import com.typesafe.sbt.packager.MappingsHelper.directory
-
 name := "joern-sample-extension"
 ThisBuild/organization := "io.joern"
-ThisBuild/scalaVersion := "2.13.0"
+ThisBuild/scalaVersion := "2.13.4"
 
 enablePlugins(JavaAppPackaging)
-enablePlugins(GitVersioning)
 
 lazy val schema = project.in(file("schema"))
-dependsOn(schema)
+lazy val domainClasses = project.in(file("domain-classes"))
+lazy val schemaExtender = project.in(file("schema-extender"))
+
+dependsOn(domainClasses)
 libraryDependencies ++= Seq(
   "io.shiftleft" %% "semanticcpg" % Versions.cpg,
-  "io.shiftleft" %% "semanticcpg-tests" % Versions.cpg % Test classifier "tests",
   "io.shiftleft" %% "fuzzyc2cpg-tests" % Versions.cpg % Test classifier "tests",
-  "io.shiftleft" %% "fuzzyc2cpg" % Versions.cpg % Test,
   "org.scalatest" %% "scalatest" % "3.1.1" % Test,
 
-// The eclipse.jgit dependency is specific to this example
-"org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r"
-
+  // The eclipse.jgit dependency is specific to this example
+  "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r"
 )
-excludeDependencies += ExclusionRule("io.shiftleft", "codepropertygraph-domain-classes_2.13")
 
 // We exclude a few jars that the main joern distribution already includes
 Universal / mappings := (Universal / mappings).value.filterNot {
@@ -45,35 +41,25 @@ Universal / mappings := (Universal / mappings).value.filterNot {
     path.contains("io.joern.schema")
 }
 
-mappings in Universal ++= directory("schema/src/main/resources")
-
-sources in (Compile,doc) := Seq.empty
-publishArtifact in (Compile, packageDoc) := false
-
 lazy val createDistribution = taskKey[Unit]("Create binary distribution of extension")
 createDistribution := {
-  (Universal/packageZipTarball).value
   val pkgBin = (Universal/packageBin).value
-  val dstArchive = "./plugin.zip"
-  IO.copy(
-    List((pkgBin, file(dstArchive))),
-    CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true)
-  )
+  val dstArchive = file("./plugin.zip")
+  IO.copyFile(pkgBin, dstArchive,
+    CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
   println(s"created distribution - resulting files: $dstArchive")
 }
 
 ThisBuild/Compile/scalacOptions ++= Seq(
-  "-Xfatal-warnings",
   "-feature",
   "-deprecation",
   "-language:implicitConversions",
 )
 
-ThisBuild/licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-
 Global/onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild/resolvers ++= Seq(
   Resolver.mavenLocal,
-  Resolver.bintrayRepo("shiftleft", "maven"),
   "Sonatype OSS" at "https://oss.sonatype.org/content/repositories/public")
+
+maintainer := "michael@shiftleft.io"
