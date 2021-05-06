@@ -5,7 +5,7 @@ set -o pipefail
 set -o nounset
 set -eu
 
-readonly JOERN_DISTRIBUTION="$HOME/bin/joern/joern-cli"
+readonly JOERN_VERSION="v1.1.162"
 
 if [ "$(uname)" = 'Darwin' ]; then
   # get script location
@@ -28,11 +28,39 @@ else
   SCRIPT_ABS_DIR=$(dirname "$SCRIPT_ABS_PATH")
 fi
 
+# Check required tools are installed.
+check_installed() {
+  if ! type "$1" > /dev/null; then
+    echo "Please ensure you have $1 installed."
+    exit 1
+  fi
+}
+
+readonly JOERN_INSTALL="$SCRIPT_ABS_DIR/joern-inst"
+
 echo "Examining Joern installation..."
 
-if [ ! -d "${JOERN_DISTRIBUTION}" ]; then
-    echo "Cannot find Joern installation at ${JOERN_DISTRIBUTION} - please install Joern first"
-    exit
+if [ ! -d "${JOERN_INSTALL}" ]; then
+    echo "Cannot find Joern installation at ${JOERN_INSTALL}"
+    echo "Installing..."
+    check_installed "curl"
+
+    # Fetch installer
+    echo "https://github.com/ShiftLeftSecurity/joern/releases/download/$JOERN_VERSION/joern-install.sh"
+    curl -L "https://github.com/ShiftLeftSecurity/joern/releases/download/$JOERN_VERSION/joern-install.sh" -o "$SCRIPT_ABS_DIR/joern-install.sh"
+
+    # Install into `joern-inst`
+    chmod +x $SCRIPT_ABS_DIR/joern-install.sh
+    $SCRIPT_ABS_DIR/joern-install.sh --install-dir="$SCRIPT_ABS_DIR/joern-inst" --version=$JOERN_VERSION --without-plugins
+    rm $SCRIPT_ABS_DIR/joern-install.sh
+
+    # Create symlinks
+    pushd $SCRIPT_ABS_DIR
+    ln -s joern-inst/joern-cli/joern . || true
+    ln -s joern-inst/joern-cli/joern-parse . || true
+    ln -s joern-inst/joern-cli/fuzzyc2cpg.sh . || true
+    ln -s joern-inst/joern-cli/joern-scan . || true
+    popd
 fi
 
 echo "Building and installing plugin - incl. domain classes for schema extension..."
@@ -40,7 +68,7 @@ pushd $SCRIPT_ABS_DIR
 sbt createDistribution replaceDomainClassesInJoern
 popd
 
-pushd "${JOERN_DISTRIBUTION}"
+pushd "${JOERN_INSTALL}/joern-cli"
   ./joern --remove-plugin plugin || true
   ./joern --add-plugin $SCRIPT_ABS_DIR/plugin.zip
 popd
