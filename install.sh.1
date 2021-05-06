@@ -5,7 +5,7 @@ set -o pipefail
 set -o nounset
 set -eu
 
-readonly JOERN_VERSION=$(<joern-version)
+readonly JOERN_VERSION="v1.1.82"
 
 if [ "$(uname)" = 'Darwin' ]; then
   # get script location
@@ -46,33 +46,37 @@ if [ ! -d "${JOERN_INSTALL}" ]; then
     check_installed "curl"
 
     # Fetch installer
-    echo "https://github.com/ShiftLeftSecurity/joern/releases/download/v$JOERN_VERSION/joern-install.sh"
-    curl -L "https://github.com/ShiftLeftSecurity/joern/releases/download/v$JOERN_VERSION/joern-install.sh" -o "$SCRIPT_ABS_DIR/joern-install.sh"
+
+    echo "https://github.com/ShiftLeftSecurity/joern/releases/download/$JOERN_VERSION/joern-install.sh"
+    curl -L "https://github.com/ShiftLeftSecurity/joern/releases/download/$JOERN_VERSION/joern-install.sh" -o "$SCRIPT_ABS_DIR/joern-install.sh"
 
     # Install into `joern-inst`
     chmod +x $SCRIPT_ABS_DIR/joern-install.sh
-    $SCRIPT_ABS_DIR/joern-install.sh --install-dir="$SCRIPT_ABS_DIR/joern-inst" --version=v$JOERN_VERSION --without-plugins
+    $SCRIPT_ABS_DIR/joern-install.sh --install-dir="$SCRIPT_ABS_DIR/joern-inst" --version=$JOERN_VERSION --without-plugins
     rm $SCRIPT_ABS_DIR/joern-install.sh
 
     # Create symlinks
+
     pushd $SCRIPT_ABS_DIR
     ln -s joern-inst/joern-cli/joern . || true
     ln -s joern-inst/joern-cli/joern-parse . || true
     ln -s joern-inst/joern-cli/fuzzyc2cpg.sh . || true
     ln -s joern-inst/joern-cli/joern-scan . || true
     popd
+
 fi
 
-echo "Building and installing plugin - incl. domain classes for schema extension..."
+# Build the plugin
+
+echo "Compiling (sbt createDistribution)..."
 pushd $SCRIPT_ABS_DIR
-sbt createDistribution replaceDomainClassesInJoern
+rm lib || true
+sbt createDistribution
 popd
 
-pushd "${JOERN_INSTALL}/joern-cli"
-  ./joern --remove-plugin plugin || true
-  ./joern --add-plugin $SCRIPT_ABS_DIR/plugin.zip
-popd
+# Install the plugin
 
-echo "all done. you can now use this plugin in joern. Examples:"
-echo "joern> nodes.ExampleNode.PropertyNames.all"
-echo "joern> io.shiftleft.gitextension.Gitextension.description"
+pushd $SCRIPT_ABS_DIR/joern-inst/joern-cli
+  ./joern --remove-plugin plugin
+  ./joern --add-plugin ../../plugin.zip
+popd
