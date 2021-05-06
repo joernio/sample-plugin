@@ -1,7 +1,7 @@
 name := "joern-sample-plugin-schema-extender"
 
 val joernInstallPath = settingKey[File]("path to joern installation")
-joernInstallPath := Path.userHome / "bin/joern/joern-cli"
+joernInstallPath := file("joern-inst/joern-cli") // as defined in `install.sh`
 
 val replaceDomainClassesInJoern = taskKey[Unit]("generates new domain classes based on the given schema, and installs them in the joern distribution")
 

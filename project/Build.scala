@@ -1,7 +1,7 @@
 import sbt._
 
 object Versions {
-  val cpg = IO.read("cpg-version")
+  val cpg = IO.read(file("cpg-version"))
 }
 
 object Projects {

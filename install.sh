@@ -53,14 +53,6 @@ if [ ! -d "${JOERN_INSTALL}" ]; then
     chmod +x $SCRIPT_ABS_DIR/joern-install.sh
     $SCRIPT_ABS_DIR/joern-install.sh --install-dir="$SCRIPT_ABS_DIR/joern-inst" --version=v$JOERN_VERSION --without-plugins
     rm $SCRIPT_ABS_DIR/joern-install.sh
-
-    # Create symlinks
-    pushd $SCRIPT_ABS_DIR
-    ln -s joern-inst/joern-cli/joern . || true
-    ln -s joern-inst/joern-cli/joern-parse . || true
-    ln -s joern-inst/joern-cli/fuzzyc2cpg.sh . || true
-    ln -s joern-inst/joern-cli/joern-scan . || true
-    popd
 fi
 
 echo "Building and installing plugin - incl. domain classes for schema extension..."
@@ -73,6 +65,6 @@ pushd "${JOERN_INSTALL}/joern-cli"
   ./joern --add-plugin $SCRIPT_ABS_DIR/plugin.zip
 popd
 
-echo "all done. you can now use this plugin in joern. Examples:"
+echo "All done! Joern and this plugin are ready to use in ${JOERN_INSTALL}. Example usage:"
 echo "joern> nodes.ExampleNode.PropertyNames.all"
 echo "joern> io.shiftleft.gitextension.Gitextension.description"
