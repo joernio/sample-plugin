@@ -1,7 +1,7 @@
 import sbt._
 
 object Versions {
-  val cpg = IO.read(Path.userHome / "bin/joern/joern-cli/schema-extender/cpg-version")
+  val cpg = IO.read(file("cpg-version"))
 }
 
 object Projects {
