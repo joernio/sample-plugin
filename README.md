@@ -12,7 +12,9 @@ To install, make sure that joern and sbt are installed, then simply run `./insta
 
 More details at: https://docs.joern.io/extensions
 
-To upgrade this plugin to the latest joern/ocular: 
+
+## Upgrade this plugin to the latest joern/ocular
+
 1) find the latest joern version in https://github.com/joernio/joern/releases
 2) find out which cpg version was used for that release - replace `master` with the joern version in the following url: https://github.com/joernio/joern/blob/master/build.sbt and look for `val cpgVersion = "x.y.z"` in the top section
 3) update the files `joern-version` and `cpg-version` in this repository
