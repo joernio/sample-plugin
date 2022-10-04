@@ -28,7 +28,8 @@ Universal / mappings := (Universal / mappings).value.filterNot {
     path.contains("com.lihaoyi.u") ||
     path.contains("io.shiftleft") ||
     path.contains("org.typelevel") ||
-    path.contains("io.undertow") ||
+    path.contains("io.undertow") ||    
+    path.contains("org.json4s") ||
     path.contains("com.chuusai") ||
     path.contains("io.get-coursier") ||
     path.contains("io.circe") ||
